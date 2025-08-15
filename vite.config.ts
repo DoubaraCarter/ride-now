@@ -6,7 +6,6 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 
 export default defineConfig({
-  base: '/ride-now/',
   plugins: [
     react(),
     tailwindcss(),
