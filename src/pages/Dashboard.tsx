@@ -3,9 +3,32 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Clock, Star, CreditCard } from "lucide-react";
 import Layout from "@/components/Layout";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [balance, setBalance] = useState(0);
+
+  // Load balance from localStorage
+  useEffect(() => {
+    const loadBalance = () => {
+      try {
+        const raw = localStorage.getItem("wallet_balance");
+        setBalance(raw ? JSON.parse(raw) : 0);
+      } catch {
+        setBalance(0);
+      }
+    };
+
+    loadBalance(); // initial load
+
+    // Listen for changes from Wallet updates
+    window.addEventListener("storage", loadBalance);
+
+    return () => {
+      window.removeEventListener("storage", loadBalance);
+    };
+  }, []);
 
   const recentRides = [
     { id: 1, destination: "Downtown Mall", time: "2h ago", rating: 4.8 },
@@ -59,7 +82,9 @@ const Dashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-extrabold text-white mb-4">$45.50</div>
+            <div className="text-4xl font-extrabold text-white mb-4">
+              ${balance.toFixed(2)}
+            </div>
             <Button
               variant="outline"
               size="sm"
